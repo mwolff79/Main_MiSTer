@@ -4551,6 +4551,27 @@ int input_test(int getchar)
 			{
 				printf("opened %d(%2d): %s (%04x:%04x) %d \"%s\" \"%s\"\n", i, input[i].bind, input[i].devname, input[i].vid, input[i].pid, input[i].quirk, input[i].id, input[i].name);
 				restore_player(i);
+
+				if(cfg.arcade_cabinet)
+				{
+					for (uint8_t j = 0; j < (sizeof(cfg.player_controller) / sizeof(cfg.player_controller[0])); j++)
+					{
+						if (cfg.player_controller[j][0])
+						{
+							if (strcasestr(input[i].id, cfg.player_controller[j]))
+							{
+								assign_player(i, j + 1);
+								break;
+							}
+
+							if (strcasestr(input[i].sysfs, cfg.player_controller[j]))
+							{
+								assign_player(i, j + 1);
+								break;
+							}
+						}
+					}
+				}
 			}
 			unflag_players();
 		}

@@ -108,6 +108,7 @@ static const ini_var_t ini_vars[] =
 	{ "PLAYER_2_CONTROLLER", (void*)(&(cfg.player_controller[1])), STRING, 0, sizeof(cfg.player_controller[1]) - 1 },
 	{ "PLAYER_3_CONTROLLER", (void*)(&(cfg.player_controller[2])), STRING, 0, sizeof(cfg.player_controller[2]) - 1 },
 	{ "PLAYER_4_CONTROLLER", (void*)(&(cfg.player_controller[3])), STRING, 0, sizeof(cfg.player_controller[3]) - 1 },
+	{ "ARCADE_CABINET", (void *)(&(cfg.arcade_cabinet)), UINT8, 0, 1},
 	{ "DISABLE_AUTOFIRE", (void *)(&(cfg.disable_autofire)), UINT8, 0, 1},
 	{ "VIDEO_BRIGHTNESS", (void *)(&(cfg.video_brightness)), UINT8, 0, 100},
 	{ "VIDEO_CONTRAST", (void *)(&(cfg.video_contrast)), UINT8, 0, 100},
