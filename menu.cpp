@@ -1273,6 +1273,15 @@ void HandleUI(void)
 			       menu, select, up, down,
 			       left, right, plus, minus);
 
+	// Ensure we clear out the file-selector-visible file on select or cancel
+	if (cfg.log_file_entry)
+	{
+		if (menustate == fs_MenuSelect)
+			MakeFile("/tmp/FILESELECT", "selected");
+		else if (menustate == fs_MenuCancel)
+			MakeFile("/tmp/FILESELECT", "cancelled");
+	}
+
 	switch (menustate)
 	{
 	case MENU_NONE1:
@@ -2258,6 +2267,7 @@ void HandleUI(void)
 
 				if (fs_Options & SCANO_NEOGEO)
 				{
+					neocd_set_en(0);
 					neogeo_romset_tx(selPath);
 				}
 				else
@@ -2321,6 +2331,11 @@ void HandleUI(void)
 			else if (is_saturn())
 			{
 				saturn_set_image(ioctl_index, selPath);
+			}
+			else if (is_neogeo())
+			{
+				neocd_set_en(1);
+				neocd_set_image(selPath);
 			}
 			else
 			{
@@ -4699,12 +4714,9 @@ void HandleUI(void)
 		if (cfg.log_file_entry && flist_nDirEntries())
 		{
 			//Write out paths infos for external integration
-			FILE* filePtr = fopen("/tmp/CURRENTPATH", "w");
-			FILE* pathPtr = fopen("/tmp/FULLPATH", "w");
-			fprintf(filePtr, "%s", flist_SelectedItem()->altname);
-			fprintf(pathPtr, "%s", selPath);
-			fclose(filePtr);
-			fclose(pathPtr);
+			MakeFile("/tmp/CURRENTPATH", flist_SelectedItem()->altname);
+			MakeFile("/tmp/FULLPATH", selPath);
+			MakeFile("/tmp/FILESELECT", "active");
 		}
 		break;
 

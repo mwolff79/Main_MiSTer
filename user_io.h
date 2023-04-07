@@ -239,6 +239,7 @@ uint16_t sdram_sz(int sz = -1);
 int user_io_is_dualsdr();
 uint16_t altcfg(int alt = -1);
 
+void MakeFile(const char * filename, const char * data);
 int GetUARTMode();
 void SetUARTMode(int mode);
 int GetMidiLinkMode();
@@ -267,6 +268,7 @@ char is_x86();
 char is_snes();
 char is_sgb();
 char is_neogeo();
+char is_neogeo_cd();
 char is_megacd();
 char is_pce();
 char is_archie();
