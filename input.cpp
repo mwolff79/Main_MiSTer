@@ -30,6 +30,7 @@
 #include "support.h"
 #include "profiling.h"
 #include "gamecontroller_db.h"
+#include "str_util.h"
 
 #define NUMDEV 30
 #define NUMPLAYERS 6
@@ -1189,6 +1190,7 @@ typedef struct
 	char     mac[64];
 
 	int      bind;
+	uint32_t unique_hash;
 	char     devname[32];
 	char     id[80];
 	char     name[128];
@@ -1440,15 +1442,23 @@ int get_map_cancel()
 static char *get_map_name(int dev, int def)
 {
 	static char name[128];
-	if (def || is_menu()) sprintf(name, "input_%s%s_v3.map", input[dev].idstr, input[dev].mod ? "_m" : "");
-	else sprintf(name, "%s_input_%s%s_v3.map", user_io_get_core_name(), input[dev].idstr, input[dev].mod ? "_m" : "");
+	char id[32];
+
+	if (cfg.controller_unique_mapping) sprintfz(id, "%s_%08x", input[dev].idstr, input[dev].unique_hash);
+	else strcpyz(id, input[dev].idstr);
+
+	if (def || is_menu()) sprintf(name, "input_%s%s_v3.map", id, input[dev].mod ? "_m" : "");
+	else sprintf(name, "%s_input_%s%s_v3.map", user_io_get_core_name(), id, input[dev].mod ? "_m" : "");
 	return name;
 }
 
 static char *get_kbdmap_name(int dev)
 {
 	static char name[128];
-	sprintf(name, "kbd_%s.map", input[dev].idstr);
+
+	if (cfg.controller_unique_mapping) sprintfz(name, "kbd_%s_%08x.map", input[dev].idstr, input[dev].unique_hash);
+	else sprintfz(name, "kbd_%s.map", input[dev].idstr);
+
 	return name;
 }
 
@@ -3385,6 +3395,10 @@ void mergedevs()
 									strcpy(input[i].id, id);
 									strcpy(input[i].sysfs, sysfs);
 									strcpy(input[i].mac, uniq);
+
+									input[i].unique_hash = str_hash(input[i].id);
+									input[i].unique_hash = str_hash(input[i].mac, input[i].unique_hash);
+
 									input[i].timeout = (strlen(uniq) && strstr(sysfs, "bluetooth")) ? (cfg.bt_auto_disconnect * 10) : 0;
 								}
 							}
